@@ -1,19 +1,23 @@
+import typing
+
+from SpiffWorkflow.bpmn.specs.bpmn_process_spec import BpmnProcessSpec
 from SpiffWorkflow.bpmn.workflow import BpmnWorkflow
 from SpiffWorkflow.camunda.parser.CamundaParser import CamundaParser
-from SpiffWorkflow.camunda.specs.UserTask import EnumFormField, UserTask
+from SpiffWorkflow.camunda.specs.user_task import EnumFormField, UserTask
+from SpiffWorkflow.util.task import TaskState
+from SpiffWorkflow.task import Task
 
 
-def show_form(task):
-
+def show_form(task: Task):
     form = task.task_spec.form
-
     if task.data is None:
         task.data = {}
-
     for field in form.fields:
         prompt = field.label
         if isinstance(field, EnumFormField):
-            prompt += " (Options: " + ', '.join([str(option.id) for option in field.options]) + ")"
+            prompt += " (Options: " + ', '.join(
+                [str(option.id) for option in field.options]
+            ) + ")"
         if field.type == "boolean":
             prompt += " (Options: true, false)"
         prompt += " : "
@@ -23,17 +27,22 @@ def show_form(task):
         if field.type == "boolean":
             answer = answer.lower().strip()
             answer = (answer == 'true' or answer == 'yes')
-            
-        task.update_data_var(field.id, answer)
-        
-        
+
+        task.set_data(**{field.id: answer})
+
+
+def get_ready_tasks(workflow: BpmnWorkflow):
+    # XXX Geht das auch einfacher?
+    return workflow.get_tasks(state=TaskState.READY, manual=True)
+
+
 parser = CamundaParser()
 parser.add_bpmn_file('ducks.bpmn')
-spec = parser.get_spec('duck_process')
-workflow = BpmnWorkflow(spec)
+spec: BpmnProcessSpec = parser.get_spec('duck_process')
+workflow: BpmnWorkflow = BpmnWorkflow(spec)
 
 workflow.do_engine_steps()
-ready_tasks = workflow.get_ready_user_tasks()
+ready_tasks: typing.List[Task | None] = get_ready_tasks(workflow)
 while len(ready_tasks) > 0:
     for task in ready_tasks:
         if isinstance(task.task_spec, UserTask):
@@ -41,7 +50,7 @@ while len(ready_tasks) > 0:
             print(task.data)
         else:
             print("Complete Task ", task.task_spec.name)
-        workflow.complete_task_from_id(task.id)
+        workflow.run_task_from_id(task.id)
     workflow.do_engine_steps()
-    ready_tasks = workflow.get_ready_user_tasks()
-# print(workflow.last_task.data)
+    ready_tasks: typing.List[Task | None] = get_ready_tasks(workflow)
+print(workflow.last_task.data)
