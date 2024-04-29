@@ -51,6 +51,6 @@ in the SpiffyDuck main directory
 
 .. code:: bash
 
-    venv/bin/python ducks.py
+    venv/bin/python run.py
 
 
