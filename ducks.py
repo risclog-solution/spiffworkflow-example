@@ -1,11 +1,16 @@
 import typing
+import json
 
+from SpiffWorkflow.workflow import Workflow
+from SpiffWorkflow.serializer.json import JSONSerializer
 from SpiffWorkflow.bpmn.specs.bpmn_process_spec import BpmnProcessSpec
 from SpiffWorkflow.bpmn.workflow import BpmnWorkflow
 from SpiffWorkflow.camunda.parser.CamundaParser import CamundaParser
 from SpiffWorkflow.camunda.specs.user_task import EnumFormField, UserTask
 from SpiffWorkflow.util.task import TaskState
 from SpiffWorkflow.task import Task
+
+serializer = JSONSerializer()
 
 
 def show_form(task: Task):
@@ -46,10 +51,18 @@ while len(ready_tasks) > 0:
     for task in ready_tasks:
         if isinstance(task.task_spec, UserTask):
             show_form(task)
-            print(task.data)
+            # print(task.data)
         else:
             print("Complete Task ", task.task_spec.name)
         workflow.run_task_from_id(task.id)
+        # ### Serialize ### Not working yet
+        # data = workflow.serialize(serializer)
+        # with open('workflow.json', 'w') as f:
+        #     f.write(data)
+        # with open('workflow.json') as fp:
+        #     workflow_json = fp.read()
+        #     workflow = Workflow.deserialize(serializer, workflow_json)
+
     workflow.do_engine_steps()
     ready_tasks: typing.List[Task | None] = get_ready_tasks(workflow)
-print(workflow.last_task.data)
+# print(workflow.last_task.data)
