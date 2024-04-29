@@ -13,13 +13,13 @@
     <bpmn:userTask id="interview_client" name="Interview Client" camunda:formKey="duck_application">
       <bpmn:extensionElements>
         <camunda:formData>
-          <camunda:formField id="variety" label="What is your favorite kind of duck?" type="enum">
-            <camunda:value id="Mallard" name="Mallard" />
-            <camunda:value id="Wood_Duck" name="Wood Duck" />
-            <camunda:value id="Widgeon" name="Widgeon" />
-            <camunda:value id="Dead" name="Dead ducks" />
+          <camunda:formField id="variety" label="Was ist deine liebste Entenart?" type="enum">
+            <camunda:value id="Stockente" name="Stockente" />
+            <camunda:value id="Waldente" name="Waldente" />
+            <camunda:value id="Pfeifente" name="Pfeifente" />
+            <camunda:value id="Tote Ente" name="Tote Ente" />
           </camunda:formField>
-          <camunda:formField id="tolerant" label="I don&#39;t mind finding feathers and eggs in my home." type="boolean" />
+          <camunda:formField id="tolerant" label="Es macht mir nichts aus, in meinem Zuhause Federn und Eier zu finden." type="boolean" />
         </camunda:formData>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1</bpmn:incoming>
@@ -28,7 +28,7 @@
     <bpmn:scriptTask id="Activity_0fmjk85" name="Deliver&#10;real Duck">
       <bpmn:incoming>Flow_06xo1t0</bpmn:incoming>
       <bpmn:outgoing>Flow_4</bpmn:outgoing>
-      <bpmn:script>print("Delivering a Real Duck!")</bpmn:script>
+      <bpmn:script>print("Lieferung einer echten Ente!")</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:exclusiveGateway id="Gateway_0vqsmxy" name="will real duck be&#10; safe?">
       <bpmn:incoming>Flow_1olpa6l</bpmn:incoming>
@@ -49,7 +49,7 @@
     <bpmn:scriptTask id="Activity_1jz3ih0" name="Determine Duck Worthiness">
       <bpmn:incoming>Flow_2</bpmn:incoming>
       <bpmn:outgoing>Flow_1olpa6l</bpmn:outgoing>
-      <bpmn:script>if not tolerant or variety == 'Dead':
+      <bpmn:script>if not tolerant or variety == 'Tote Ente':
     is_safe = False
 else:
     is_safe = True
@@ -58,7 +58,7 @@ else:
     <bpmn:scriptTask id="Activity_0mwove7" name="Deliver Decoy Duck">
       <bpmn:incoming>Flow_0wkvu0e</bpmn:incoming>
       <bpmn:outgoing>Flow_0wmf1w5</bpmn:outgoing>
-      <bpmn:script>print("Just Delivering a Decoy Duck, you can't kill it!")</bpmn:script>
+      <bpmn:script>print("Lieferung einer Lockente, die man nicht töten kann!")</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:textAnnotation id="TextAnnotation_1183juq">
       <bpmn:text>Receive Request for Duck</bpmn:text>
